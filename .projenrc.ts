@@ -45,6 +45,9 @@ const developmentJob: Job = {
   needs: ['release_github'],
   name: 'Deploy to Development',
   runsOn: ['ubuntu-latest'],
+  environment: {
+    name: 'Development',
+  },
   permissions: {
     contents: JobPermission.READ,
     deployments: JobPermission.READ,

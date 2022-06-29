@@ -29,16 +29,21 @@ const npmInstallStep: JobStep = {
 };
 const deploymentStep: JobStep = {
   name: 'Deploy stack',
-  run: 'cdk deploy --all --require-approval never',
-};
-const stagingJob: Job = {
-  name: 'Deploy to Staging',
-  runsOn: ['ubuntu-latest'],
   env: {
     AWS_DEFAULT_REGION: '${{ secrets.AWS_DEFAULT_REGION }}',
     AWS_ACCESS_KEY_ID: '${{ secrets.AWS_ACCESS_KEY_ID }}',
     AWS_SECRET_ACCESS_KEY: '${{ secrets.AWS_SECRET_ACCESS_KEY }}',
   },
+  run: 'cdk deploy --all --require-approval never',
+};
+const stagingJob: Job = {
+  name: 'Deploy to Staging',
+  runsOn: ['ubuntu-latest'],
+  // env: {
+  //   AWS_DEFAULT_REGION: '${{ secrets.AWS_DEFAULT_REGION }}',
+  //   AWS_ACCESS_KEY_ID: '${{ secrets.AWS_ACCESS_KEY_ID }}',
+  //   AWS_SECRET_ACCESS_KEY: '${{ secrets.AWS_SECRET_ACCESS_KEY }}',
+  // },
   environment: {
     name: 'Staging',
   },

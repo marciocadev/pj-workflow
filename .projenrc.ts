@@ -35,9 +35,9 @@ const stagingJob: Job = {
   name: 'Deploy to Staging',
   runsOn: ['ubuntu-latest'],
   environment: {
-    AWS_DEFAULT_REGION: '${{ env.AWS_DEFAULT_REGION }}',
-    AWS_ACCESS_KEY_ID: '${{ env.AWS_ACCESS_KEY_ID }}',
-    AWS_SECRET_ACCESS_KEY: '${{ env.AWS_SECRET_ACCESS_KEY }}',
+    AWS_DEFAULT_REGION: '${{ secret.AWS_DEFAULT_REGION }}',
+    AWS_ACCESS_KEY_ID: '${{ secret.AWS_ACCESS_KEY_ID }}',
+    AWS_SECRET_ACCESS_KEY: '${{ secret.AWS_SECRET_ACCESS_KEY }}',
     name: 'Staging',
   },
   permissions: {

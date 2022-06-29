@@ -50,7 +50,7 @@ jobs:
       id-token: write
     environment:
       name: Production
-    if: github.event.inputs.releaseType == 'prod'
+    if: github.event.inputs.release_type == 'prod'
     steps:
       - name: Checkout
         uses: actions/checkout@v3

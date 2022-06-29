@@ -21,7 +21,7 @@ const awsCredentialStep: JobStep = {
     // 'role-to-assume': 'arn:aws:iam::549672552044:role/github-actions-role',
     'aws-access-key-id': '${{ secrets.AWS_ACCESS_KEY_ID }}',
     'aws-secret-access-key': '${{ secrets.AWS_SECRET_ACCESS_KEY }}',
-    'aws-region': 'us-east-2',
+    'aws-region': '${{ secrets.AWS_DEFAULT_REGION }}',
   },
 };
 const setupNodeStep: JobStep = {

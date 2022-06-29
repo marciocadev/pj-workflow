@@ -18,7 +18,9 @@ const awsCredentialStep: JobStep = {
   name: 'Configura AWS Credentials',
   uses: 'aws-actions/configure-aws-credentials@v1',
   with: {
-    'role-to-assume': 'arn:aws:iam::549672552044:role/github-actions-role',
+    // 'role-to-assume': 'arn:aws:iam::549672552044:role/github-actions-role',
+    'aws-access-key-id': '${{ secrets.AWS_ACCESS_KEY_ID }}',
+    'aws-secret-access-key': '${{ secrets.AWS_SECRET_ACCESS_KEY }}',
     'aws-region': 'us-east-2',
   },
 };
@@ -37,11 +39,6 @@ const npmInstallStep: JobStep = {
 };
 const deploymentStep: JobStep = {
   name: 'Deploy stack',
-  // env: {
-  //   AWS_DEFAULT_REGION: '${{ secrets.AWS_DEFAULT_REGION }}',
-  //   AWS_ACCESS_KEY_ID: '${{ secrets.AWS_ACCESS_KEY_ID }}',
-  //   AWS_SECRET_ACCESS_KEY: '${{ secrets.AWS_SECRET_ACCESS_KEY }}',
-  // },
   run: 'cdk deploy --all --require-approval never',
 };
 const stagingJob: Job = {

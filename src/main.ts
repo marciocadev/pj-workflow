@@ -6,7 +6,7 @@ export class MyStack extends Stack {
     super(scope, id, props);
 
     new CfnOutput(this, 'OutputTest', {
-      value: 'teste',
+      value: 'teste2',
     });
   }
 }

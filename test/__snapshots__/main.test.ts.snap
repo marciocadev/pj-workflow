@@ -4,7 +4,7 @@ exports[`Snapshot 1`] = `
 Object {
   "Outputs": Object {
     "OutputTest": Object {
-      "Value": "teste",
+      "Value": "teste2",
     },
   },
   "Parameters": Object {

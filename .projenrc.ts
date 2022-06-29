@@ -103,4 +103,7 @@ deployingWorkflow?.on({
 deployingWorkflow?.addJobs({ staging: stagingJob });
 deployingWorkflow?.addJobs({ production: productionJob });
 
+project.release?.addJobs({ staging: stagingJob });
+project.release?.addJobs({ production: productionJob });
+
 project.synth();

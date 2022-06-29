@@ -41,6 +41,7 @@ const deploymentStep: JobStep = {
   run: 'cdk deploy --all --require-approval never',
 };
 const stagingJob: Job = {
+  needs: ['release_github'],
   name: 'Deploy to Staging',
   runsOn: ['ubuntu-latest'],
   environment: {

@@ -10,6 +10,10 @@ const project = new awscdk.AwsCdkTypeScriptApp({
   release: true,
 });
 
+const checkoutStep: JobStep = {
+  name: 'Checkout',
+  uses: 'actions/checkout@v3',
+};
 const awsCredentialStep: JobStep = {
   name: 'Configura AWS Credentials',
   uses: 'aws-actions/configure-aws-credentials@v1',
@@ -17,10 +21,6 @@ const awsCredentialStep: JobStep = {
     'role-to-assume': 'arn:aws:iam::549672552044:role/github-actions-role',
     'aws-region': 'us-east-2',
   },
-};
-const checkoutStep: JobStep = {
-  name: 'Checkout',
-  uses: 'actions/checkout@v3',
 };
 const setupNodeStep: JobStep = {
   name: 'Set up node',
@@ -47,11 +47,11 @@ const deploymentStep: JobStep = {
 const stagingJob: Job = {
   name: 'Deploy to Staging',
   runsOn: ['ubuntu-latest'],
-  env: {
-    AWS_DEFAULT_REGION: '${{ secrets.AWS_DEFAULT_REGION }}',
-    AWS_ACCESS_KEY_ID: '${{ secrets.AWS_ACCESS_KEY_ID }}',
-    // AWS_SECRET_ACCESS_KEY: '${{ secrets.AWS_SECRET_ACCESS_KEY }}',
-  },
+  // env: {
+  //   AWS_DEFAULT_REGION: '${{ secrets.AWS_DEFAULT_REGION }}',
+  //   AWS_ACCESS_KEY_ID: '${{ secrets.AWS_ACCESS_KEY_ID }}',
+  // AWS_SECRET_ACCESS_KEY: '${{ secrets.AWS_SECRET_ACCESS_KEY }}',
+  // },
   environment: {
     name: 'Staging',
   },
@@ -60,8 +60,8 @@ const stagingJob: Job = {
     deployments: JobPermission.READ,
   },
   steps: [
-    awsCredentialStep,
     checkoutStep,
+    awsCredentialStep,
     setupNodeStep,
     npmGlobalInstallStep,
     npmInstallStep,

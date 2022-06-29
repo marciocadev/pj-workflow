@@ -15,7 +15,7 @@ const awsCredentialStep: JobStep = {
   uses: 'aws-actions/configure-aws-credentials@v1',
   with: {
     'role-to-assume': 'arn:aws:iam::${{secrets.AWS_ACCESS_KEY_ID}}:role/github-actions-role',
-
+    'aws-region': '${{AWS_DEFAULT_REGION}}',
   },
 };
 const checkoutStep: JobStep = {

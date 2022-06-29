@@ -29,7 +29,7 @@ const npmInstallStep: JobStep = {
 };
 const deploymentStep: JobStep = {
   name: 'Deploy stack',
-  run: 'npm run cdk deploy --all --require-approval never',
+  run: 'cdk deploy --all --require-approval never',
 };
 const stagingJob: Job = {
   name: 'Deploy to Staging',

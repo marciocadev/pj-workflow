@@ -36,4 +36,4 @@ jobs:
       - name: Install project dependencies
         run: npm install --force
       - name: Deploy stack
-        run: npm run cdk deploy --all --require-approval never
+        run: cdk deploy --all --require-approval never

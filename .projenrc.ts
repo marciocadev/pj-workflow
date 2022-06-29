@@ -18,7 +18,6 @@ const awsCredentialStep: JobStep = {
   name: 'Configura AWS Credentials',
   uses: 'aws-actions/configure-aws-credentials@v1',
   with: {
-    // 'role-to-assume': 'arn:aws:iam::549672552044:role/github-actions-role',
     'aws-access-key-id': '${{ secrets.AWS_ACCESS_KEY_ID }}',
     'aws-secret-access-key': '${{ secrets.AWS_SECRET_ACCESS_KEY }}',
     'aws-region': '${{ secrets.AWS_REGION }}',
@@ -44,11 +43,6 @@ const deploymentStep: JobStep = {
 const stagingJob: Job = {
   name: 'Deploy to Staging',
   runsOn: ['ubuntu-latest'],
-  // env: {
-  //   AWS_DEFAULT_REGION: '${{ secrets.AWS_DEFAULT_REGION }}',
-  //   AWS_ACCESS_KEY_ID: '${{ secrets.AWS_ACCESS_KEY_ID }}',
-  // AWS_SECRET_ACCESS_KEY: '${{ secrets.AWS_SECRET_ACCESS_KEY }}',
-  // },
   environment: {
     name: 'Staging',
   },
@@ -67,8 +61,29 @@ const stagingJob: Job = {
   ],
 };
 
-const stagingWorkflow = project.github?.addWorkflow('staging');
-stagingWorkflow?.on({
+const productionJob: Job = {
+  name: 'Deploy to Production',
+  runsOn: ['ubuntu-latest'],
+  environment: {
+    name: 'Production',
+  },
+  permissions: {
+    contents: JobPermission.READ,
+    deployments: JobPermission.READ,
+    idToken: JobPermission.WRITE,
+  },
+  steps: [
+    checkoutStep,
+    awsCredentialStep,
+    setupNodeStep,
+    npmGlobalInstallStep,
+    npmInstallStep,
+    deploymentStep,
+  ],
+};
+
+const deployingWorkflow = project.github?.addWorkflow('deploying');
+deployingWorkflow?.on({
   release: {
     types: ['published'],
   },
@@ -82,7 +97,7 @@ stagingWorkflow?.on({
     },
   },
 });
-stagingWorkflow?.addJobs({
-  staging: stagingJob,
-});
+deployingWorkflow?.addJobs({ staging: stagingJob });
+deployingWorkflow?.addJobs({ production: productionJob });
+
 project.synth();

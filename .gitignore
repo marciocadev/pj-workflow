@@ -53,4 +53,4 @@ junit.xml
 /cdk.out/
 .cdk.staging/
 .parcel-cache/
-!/.github/workflows/staging.yml
+!/.github/workflows/deploying.yml

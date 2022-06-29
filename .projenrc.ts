@@ -58,6 +58,7 @@ const stagingJob: Job = {
   permissions: {
     contents: JobPermission.READ,
     deployments: JobPermission.READ,
+    idToken: JobPermission.WRITE,
   },
   steps: [
     checkoutStep,

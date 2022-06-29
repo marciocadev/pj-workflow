@@ -1,4 +1,6 @@
 import { awscdk } from 'projen';
+import { Job, JobPermission, JobStep } from 'projen/lib/github/workflows-model';
+
 const project = new awscdk.AwsCdkTypeScriptApp({
   cdkVersion: '2.29.1',
   defaultReleaseBranch: 'main',
@@ -6,10 +8,69 @@ const project = new awscdk.AwsCdkTypeScriptApp({
   projenrcTs: true,
 
   release: true,
+});
 
-  // deps: [],                /* Runtime dependencies of this module. */
-  // description: undefined,  /* The description is just a string that helps people understand the purpose of the package. */
-  // devDeps: [],             /* Build dependencies for this module. */
-  // packageName: undefined,  /* The "name" in package.json. */
+const checkoutStep: JobStep = {
+  name: 'Checkout',
+  uses: 'actions/checkout@v3',
+};
+const setupNodeStep: JobStep = {
+  name: 'Set up node',
+  uses: 'actions/setup-node@v3',
+  with: { 'node-version': '14' },
+};
+const npmGlobalInstallStep: JobStep = {
+  name: 'Install global dependencies',
+  run: 'npm install -g aws-cdk typescript npm@latest',
+};
+const npmInstallStep: JobStep = {
+  name: 'Install project dependencies',
+  run: 'npm install --force',
+};
+const deploymentStep: JobStep = {
+  name: 'Deploy stack',
+  run: 'npm run cdk deploy --all --require-approval never',
+};
+const stagingJob: Job = {
+  name: 'Deploy to Staging',
+  runsOn: ['ubuntu-latest'],
+  env: {
+    AWS_DEFAULT_REGION: '${{ secrets.AWS_DEFAULT_REGION }}',
+    AWS_ACCESS_KEY_ID: '${{ secrets.AWS_ACCESS_KEY_ID }}',
+    AWS_SECRET_ACCESS_KEY: '${{ secrets.AWS_SECRET_ACCESS_KEY }}',
+  },
+  environment: {
+    name: 'Staging',
+  },
+  permissions: {
+    contents: JobPermission.READ,
+    deployments: JobPermission.READ,
+  },
+  steps: [
+    checkoutStep,
+    setupNodeStep,
+    npmGlobalInstallStep,
+    npmInstallStep,
+    deploymentStep,
+  ],
+};
+
+const stagingWorkflow = project.github?.addWorkflow('staging');
+stagingWorkflow?.on({
+  release: {
+    types: ['published'],
+  },
+  workflowDispatch: {
+    inputs: {
+      releaseType: {
+        description: 'Where to release (staging or prod)?',
+        required: true,
+        default: 'staging',
+      },
+    },
+  },
+});
+stagingWorkflow?.addJobs({
+  staging: stagingJob,
 });
 project.synth();

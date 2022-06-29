@@ -34,10 +34,12 @@ const deploymentStep: JobStep = {
 const stagingJob: Job = {
   name: 'Deploy to Staging',
   runsOn: ['ubuntu-latest'],
+  env: {
+    CDK_DEFAULT_REGION: '${{ secrets.AWS_DEFAULT_REGION }}',
+    CDK_DEFAULT_ACCOUNT: '${{ secrets.AWS_ACCESS_KEY_ID }}',
+    AWS_SECRET_ACCESS_KEY: '${{ secrets.AWS_SECRET_ACCESS_KEY }}',
+  },
   environment: {
-    AWS_DEFAULT_REGION: '${{ secret.AWS_DEFAULT_REGION }}',
-    AWS_ACCESS_KEY_ID: '${{ secret.AWS_ACCESS_KEY_ID }}',
-    AWS_SECRET_ACCESS_KEY: '${{ secret.AWS_SECRET_ACCESS_KEY }}',
     name: 'Staging',
   },
   permissions: {

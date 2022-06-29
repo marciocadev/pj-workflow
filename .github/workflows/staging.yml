@@ -19,10 +19,11 @@ jobs:
       contents: read
       deployments: read
     environment:
-      AWS_DEFAULT_REGION: ${{ secret.AWS_DEFAULT_REGION }}
-      AWS_ACCESS_KEY_ID: ${{ secret.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secret.AWS_SECRET_ACCESS_KEY }}
       name: Staging
+    env:
+      CDK_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+      CDK_DEFAULT_ACCOUNT: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3

@@ -40,6 +40,26 @@ const deploymentStep: JobStep = {
   name: 'Deploy stack',
   run: 'cdk deploy --all --require-approval never',
 };
+
+const developmentJob: Job = {
+  needs: ['release_github'],
+  name: 'Deploy to Development',
+  runsOn: ['ubuntu-latest'],
+  permissions: {
+    contents: JobPermission.READ,
+    deployments: JobPermission.READ,
+    idToken: JobPermission.WRITE,
+  },
+  steps: [
+    checkoutStep,
+    awsCredentialStep,
+    setupNodeStep,
+    npmGlobalInstallStep,
+    npmInstallStep,
+    deploymentStep,
+  ],
+};
+
 const stagingJob: Job = {
   needs: ['release_github'],
   name: 'Deploy to Staging',
@@ -103,6 +123,7 @@ deployingWorkflow?.on({
 deployingWorkflow?.addJobs({ staging: stagingJob });
 deployingWorkflow?.addJobs({ production: productionJob });
 
+project.release?.addJobs({ development: developmentJob });
 project.release?.addJobs({ staging: stagingJob });
 project.release?.addJobs({ production: productionJob });
 

@@ -42,7 +42,7 @@ const deploymentStep: JobStep = {
 };
 
 const developmentJob: Job = {
-  needs: ['release_github'],
+  // needs: ['release_github'],
   name: 'Deploy to Development',
   runsOn: ['ubuntu-latest'],
   environment: {
@@ -126,8 +126,10 @@ deployingWorkflow?.on({
 deployingWorkflow?.addJobs({ staging: stagingJob });
 deployingWorkflow?.addJobs({ production: productionJob });
 
-project.release?.addJobs({ development: developmentJob });
-project.release?.addJobs({ staging: stagingJob });
-project.release?.addJobs({ production: productionJob });
+project.buildWorkflow?.addPostBuildJob('development', developmentJob);
+
+// project.release?.addJobs({ development: developmentJob });
+// project.release?.addJobs({ staging: stagingJob });
+// project.release?.addJobs({ production: productionJob });
 
 project.synth();

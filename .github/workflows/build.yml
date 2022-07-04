@@ -40,6 +40,11 @@ jobs:
           echo "::error::Files were changed during build (see build log). If this was triggered from a fork, you will need to update your branch."
           cat .repo.patch
           exit 1
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2.1.1
+        with:
+          name: build-artifact
+          path: dist
   self-mutation:
     needs: build
     runs-on: ubuntu-latest
@@ -69,3 +74,38 @@ jobs:
             git add .
             git commit -s -m "chore: self mutation"
             git push origin HEAD:${{ github.event.pull_request.head.ref }}
+  development:
+    name: Deploy to Development
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: read
+      id-token: write
+    environment:
+      name: Development
+    if: "! needs.build.outputs.self_mutation_happened"
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-artifact
+          path: dist
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Configura AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Set up node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "14"
+      - name: Install global dependencies
+        run: npm install -g aws-cdk typescript npm@latest
+      - name: Install project dependencies
+        run: npm install --force
+      - name: Deploy stack
+        run: cdk deploy --all --require-approval never

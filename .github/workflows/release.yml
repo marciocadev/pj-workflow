@@ -59,3 +59,62 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_REF: ${{ github.ref }}
+  staging:
+    name: Deploy to Staging
+    needs: release_github
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: read
+      id-token: write
+    environment:
+      name: Staging
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Configura AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Set up node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "14"
+      - name: Install global dependencies
+        run: npm install -g aws-cdk typescript npm@latest
+      - name: Install project dependencies
+        run: npm install --force
+      - name: Deploy stack
+        run: cdk deploy --all --require-approval never
+  production:
+    name: Deploy to Production
+    needs: staging
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: read
+      id-token: write
+    environment:
+      name: Production
+    if: github.event.inputs.release_type == 'prod'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Configura AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Set up node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "14"
+      - name: Install global dependencies
+        run: npm install -g aws-cdk typescript npm@latest
+      - name: Install project dependencies
+        run: npm install --force
+      - name: Deploy stack
+        run: cdk deploy --all --require-approval never

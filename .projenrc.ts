@@ -86,7 +86,7 @@ const stagingJob: Job = {
 };
 
 const productionJob: Job = {
-  if: "github.event.inputs.release_type == 'prod'",
+  // if: "github.event.inputs.release_type == 'prod'",
   needs: ['staging'],
   name: 'Deploy to Production',
   runsOn: ['ubuntu-latest'],

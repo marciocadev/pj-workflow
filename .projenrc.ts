@@ -129,7 +129,7 @@ deployingWorkflow?.addJobs({ production: productionJob });
 project.buildWorkflow?.addPostBuildJob('development', developmentJob);
 
 // project.release?.addJobs({ development: developmentJob });
-// project.release?.addJobs({ staging: stagingJob });
-// project.release?.addJobs({ production: productionJob });
+project.release?.addJobs({ staging: stagingJob });
+project.release?.addJobs({ production: productionJob });
 
 project.synth();
